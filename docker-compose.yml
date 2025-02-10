@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: pomodoro-api
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./symfony-api:/var/www/symfony
+      - /var/www/symfony/var/cache
+    depends_on:
+      - db
+    environment:
+      DATABASE_url: mysql://root:root@db:3306/pomodoro_db
+    ports:
+      - "8000:8000"
+    command: ["bash", "-c", "composer install && php -S 0.0.0.0:8000 -t public"]
+  
+  db:
+    container_name: mysql_db
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pomodoro_db
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
+      
