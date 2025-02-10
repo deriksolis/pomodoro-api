@@ -72,8 +72,16 @@ final class UserController extends AbstractController
             return new JsonResponse(['message' => 'No user found for id ' . $id]);
         }
 
+        $userSettings = $this->entityManager->getRepository(UserSettings::class)->findOneBy(['user' => $user]);
+
         return new JsonResponse([
-            'username' => $user->getUsername()
+            'username' => $user->getUsername(),
+            'settings' => [
+                'work_duration' => $userSettings->getWorkDuration(),
+                'short_break_duration' => $userSettings->getShortBreakDuration(),
+                'long_break_duration' => $userSettings->getLongBreakDuration(),
+                'break_interval' => $userSettings->getBreakInterval(),
+            ]
         ], 200);
     }
 
@@ -88,7 +96,7 @@ final class UserController extends AbstractController
         $this->entityManager->remove($user);
         $this->entityManager->flush();
 
-        return new JsonResponse(['message' => 'User deleted successfully'], 204);
+        return new JsonResponse(['message' => 'User deleted successfully'], 200);
     }
 
     #[Route('/update-settings/{id}', methods: ['PUT'])]

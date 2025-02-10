@@ -27,7 +27,7 @@ INSERT INTO users (username) VALUES
 ('joe'),
 ('bob');
 
-INSERT INTO user_settings (user_id, work_duration, short_break_duration, long_break_duration, long_break_interval) VALUES
-((SELECT id FROM users WHERE username = 'john'), 25, 5, 15, 4),
-((SELECT id FROM users WHERE username = 'joe'), 30, 5, 20, 4),
-((SELECT id FROM users WHERE username = 'bob'), 40, 10, 30, 5);
+INSERT INTO user_settings (user_id, work_duration, short_break_duration, long_break_duration, break_interval) VALUES
+(1, 25, 5, 15, 4),
+(2, 30, 5, 20, 4),
+(3, 40, 10, 30, 5);

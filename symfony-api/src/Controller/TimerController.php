@@ -34,7 +34,7 @@ final class TimerController extends AbstractController
         }
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['id' => $userID]);
-        $userSettings = $this->entityManager->getRepository(UserSettings::class)->findOneBy(['user' => $userID]);
+        $userSettings = $this->entityManager->getRepository(UserSettings::class)->findOneBy(['user' => $user]);
 
         if (!isset($user) || !isset($userSettings)) {
             return new JsonResponse(['message' => 'No user settings found for given ID'], 400);
@@ -56,7 +56,7 @@ final class TimerController extends AbstractController
             ], 400);
         }
 
-        $task_description = isset($data['task_description']) ?? null;
+        $task_description = $data['task_description'] ?? null;
 
         $session = new PomodoroSession();
 
@@ -74,6 +74,7 @@ final class TimerController extends AbstractController
                 'username' => $user->getUsername(),
             ],
             'session' => [
+                'session' => $session->getId(),
                 'startedAt' => $session->getStartedAt()->format('Y-m-d H:i:s'),
                 'workDuration' => $userSettings->getWorkDuration(),
                 'shortBreakDuration' => $userSettings->getShortBreakDuration(),
@@ -83,13 +84,17 @@ final class TimerController extends AbstractController
         ]);
     }
 
-    #[Route('/stop/{sessionId}', methods: ['PUT'])]
-    public function stopTimer(int $sessionId): JsonResponse
+    #[Route('/stop/{userId}/{sessionId}', methods: ['PUT'])]
+    public function stopTimer(int $userId, int $sessionId): JsonResponse
     {
         $session = $this->entityManager->getRepository(PomodoroSession::class)->find($sessionId);
 
         if (!$session) {
             return new JsonResponse(['message' => 'Session not found'], 404);
+        }
+
+        if ($session->getUser()->getId() !== $userId) {
+            return new JsonResponse(['message' => 'User who created the session must be the one who stops it'], 400);
         }
 
         if ($session->getEndedAt()) {

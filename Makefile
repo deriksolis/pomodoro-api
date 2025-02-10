@@ -25,3 +25,7 @@ app-shell:
 
 db-shell:
 	docker exec -it mysql_db mysql -u root -p
+
+test:
+	@docker exec -it pomodoro-api php vendor/bin/phpunit --testdox
+

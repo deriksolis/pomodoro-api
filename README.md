@@ -51,7 +51,7 @@ Restart the server
 #### Stop a timer
 
 ```http
-  PUT /api/timer/stop/{sessionId}
+  PUT /api/timer/stop/{userId}/{sessionId}
 ```
 
 #### Get sessions by user
@@ -85,7 +85,7 @@ Restart the server
 #### Update user settings
 
 ```http
-  PUT /api/user/user-settings/{id}
+  PUT /api/user/update-settings/{id}
 ```
 
 | Parameter | Type     | Description                |
